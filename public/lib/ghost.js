@@ -3,15 +3,8 @@
 	
 	var articlePath = window.location.protocol + '//' + window.location.host + window.location.pathname;
 
-	var pluginURL = nbb.url + '/plugins/nodebb-plugin-blog-comments',
-		savedText, nodebbDiv, contentDiv, commentsDiv, commentsCounter, commentsAuthor, commentsCategory;
+	var savedText, nodebbDiv, contentDiv;
 
-	var stylesheet = document.createElement("link");
-	stylesheet.setAttribute("rel", "stylesheet");
-	stylesheet.setAttribute("type", "text/css");
-	stylesheet.setAttribute("href", pluginURL + '/css/comments.css');
-
-	document.getElementsByTagName("head")[0].appendChild(stylesheet);
 	document.getElementById('nodebb-comments').insertAdjacentHTML('beforebegin', '<div id="nodebb"></div>');
 	nodebbDiv = document.getElementById('nodebb');
 
@@ -50,11 +43,6 @@
 		if (XHR.status >= 200 && XHR.status < 400) {
 			var data = JSON.parse(XHR.responseText), html;
 
-			commentsDiv = document.getElementById('nodebb-comments-list');
-			commentsCounter = document.getElementById('nodebb-comments-count');
-			commentsAuthor = document.getElementById('nodebb-comments-author');
-			commentsCategory = document.getElementById('nodebb-comments-category');
-
 			data.relative_path = nbb.url;
 			data.redirect_url = articlePath;
 			data.article_id = nbb.articleID;
@@ -69,22 +57,9 @@
 					}
 				}
 			}
-			
-			if (commentsCounter) {
-				commentsCounter.innerHTML = data.postCount ? (data.postCount - 1) : 0;
-			}
-
-			if (commentsCategory && data.category) {
-				commentsCategory.innerHTML = '<a href="' + nbb.url + '/category/' + data.category.slug + '">' + data.category.name + '</a>';
-			}
-
-			if (commentsAuthor && data.mainPost) {
-				commentsAuthor.innerHTML = '<span class="nodebb-author"><img src="' + data.mainPost.user.picture + '" /> <a href="' + nbb.url + '/user/' + data.mainPost.user.userslug + '">' + data.mainPost.user.username + '</a></span>';
-			}
 
 			if (pagination) {
 				html = normalizePost(parse(data, templates.blocks['posts']));
-				commentsDiv.innerHTML = commentsDiv.innerHTML + html;	
 			} else {
 				html = parse(data, data.template);
 				nodebbDiv.innerHTML = normalizePost(html);
@@ -145,11 +120,11 @@
 				}
 			} else {
 				if (data.isAdmin) {
-					var markdown = unescape(document.getElementById('nbb-markdown').innerHTML);
-					markdown = markdown.split('\n\n').slice(0,2).join('\n\n') + '\n\n**Click [here]('+articlePath+') to see the full blog post**';
+					var html = unescape(document.getElementById('nbb-post-html').innerHTML);
+					html = markdown.split('\n\n').slice(0,2).join('\n\n') + '\n\n**Click [here]('+articlePath+') to see the full post**';
 
 					document.getElementById('nodebb-content-title').value = nbb.title;
-					document.getElementById('nodebb-content-markdown').value = markdown;
+					document.getElementById('nodebb-content-html').value = html;
 					document.getElementById('nodebb-content-cid').value = nbb.cid || -1;
 					document.getElementById('nodebb-content-tags').value = JSON.stringify(nbb.tags);
 				}
