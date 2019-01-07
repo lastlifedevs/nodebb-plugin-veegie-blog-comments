@@ -24,23 +24,11 @@
 
 	Comments.getCommentData = function(req, res, callback) {
 		var commentID = req.params.id,
-			pagination = req.params.pagination ? req.params.pagination : 0,
 			uid = req.user ? req.user.uid : 0;
 
 		Comments.getTopicIDByCommentID(commentID, function(err, tid) {
-			var disabled = false;
 
 			async.parallel({
-				posts: function(next) {
-					if (disabled) {
-						next(err, []);
-					} else {
-						topics.getTopicPosts(tid, 'tid:' + tid + ':posts', 0 + req.params.pagination * 10, 9 + req.params.pagination * 9, uid, true, next);
-					}
-				},
-				postCount: function(next) {
-					topics.getTopicField(tid, 'postcount', next);
-				},
 				user: function(next) {
 					user.getUserData(uid, next);
 				},
@@ -79,18 +67,12 @@
 				res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
 				res.header("Access-Control-Allow-Credentials", "true");
 
-				var posts = data.posts.filter(function(post) {
-					return post.deleted === false;
-				});
-
 				var top = true;
 				var bottom = false;
 				var compose_location = meta.config['blog-comments:compose-location'];
 				if (compose_location == "bottom"){ bottom = true; top = false;}
 
 				res.json({
-					posts: posts,
-					postCount: data.postCount,
 					user: data.user,
 					template: Comments.template,
 					token: req.csrfToken(),
@@ -103,25 +85,6 @@
 					atTop: top
 				});
 			});
-		});
-	};
-
-	Comments.replyToComment = function(req, res, callback) {
-		var content = req.body.content,
-			tid = req.body.tid,
-			url = req.body.url,
-			uid = req.user ? req.user.uid : 0;
-
-		topics.reply({
-			tid: tid,
-			uid: uid,
-			content: content
-		}, function(err, postData) {
-			if(err) {
-				return res.redirect(url + '?error=' + err.message + '#nodebb-comments');
-			}
-
-			res.redirect(url + '#nodebb-comments');
 		});
 	};
 
