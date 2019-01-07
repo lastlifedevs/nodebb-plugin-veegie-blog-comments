@@ -1,8 +1,8 @@
 {
-	"id": "nodebb-plugin-blog-comments",
-	"name": "NodeBB Blog Comments",
-	"description": "Lets NodeBB act as a comments engine/widget for your blog.",
-	"url": "https://github.com/psychobunny/nodebb-plugin-blog-comments",
+	"id": "nodebb-plugin-veegie-blog-comments",
+	"name": "NodeBB Blog Comments - Simple Link",
+	"description": "Lets NodeBB act as a comments engine/widget for your blog. Forked modification of nodebb-plugin-blog-comments, replaces the comment thread with a forum topic link.",
+	"url": "https://github.com/lastlifedevs/nodebb-plugin-veegie-blog-comments",
 	"library": "./library.js",
 	"hooks": [
 		{
