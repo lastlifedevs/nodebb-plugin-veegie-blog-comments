@@ -194,7 +194,6 @@
 		});
 
 		app.get('/comments/get/:id/:pagination?', middleware.applyCSRF, Comments.getCommentData);
-		app.post('/comments/reply', Comments.replyToComment);
 		app.post('/comments/publish', Comments.publishArticle);
 
 		app.get('/admin/veegie-blog-comments', middleware.admin.buildHeader, renderAdmin);

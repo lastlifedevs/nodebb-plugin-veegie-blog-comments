@@ -20,7 +20,6 @@
 	],
 	"staticDirs": {
 		"templates": "./public/templates",
-		"css": "./public/css",
 		"lib": "./public/lib"
 	},
 	"templates": "./public/templates"
