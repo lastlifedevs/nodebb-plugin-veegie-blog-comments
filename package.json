@@ -1,7 +1,7 @@
 {
   "name": "nodebb-plugin-veegie-blog-comments",
   "version": "0.0.1",
-  "description": "NodeBB Blog Comments (Ghost / WP Commenting Engine) - Simple Link. Forked modification of nodebb-plugin-blog-comments, replaces the comment thread with a forum topic link.",
+  "description": "NodeBB Blog Comments (Ghost / WP Commenting Engine) - Simple Topic Link. Forked modification of nodebb-plugin-blog-comments, replaces the comment thread with a forum topic link.",
   "main": "library.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,7 +15,6 @@
     "plugin",
     "blog",
     "ghost",
-    "wordpress",
     "commenting",
     "comments"
   ],

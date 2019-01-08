@@ -52,7 +52,7 @@
 			for (var post in data.posts) {
 				if (data.posts.hasOwnProperty(post)) {
 					data.posts[post].timestamp = timeAgo(parseInt(data.posts[post].timestamp), 10);
-					if (data.posts[post]['blog-comments:url']) {
+					if (data.posts[post]['veegie-blog-comments:url']) {
 						delete data.posts[post];
 					}
 				}

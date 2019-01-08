@@ -17,7 +17,7 @@
 	module.exports = Comments;
 
 	Comments.getTopicIDByCommentID = function(commentID, callback) {
-		db.getObjectField('blog-comments', commentID, function(err, tid) {
+		db.getObjectField('veegie-blog-comments', commentID, function(err, tid) {
 			callback(err, tid);
 		});
 	};
@@ -45,7 +45,7 @@
 					topics.getMainPost(tid, uid, next);
 				}
 			}, function(err, data) {
-				var hostUrls = (meta.config['blog-comments:url'] || '').split(','),
+				var hostUrls = (meta.config['veegie-blog-comments:url'] || '').split(','),
 					url;
 
 				hostUrls.forEach(function(hostUrl) {
@@ -59,18 +59,15 @@
 					}
 				});
 
-				if (!url) {
-					winston.warn('[nodebb-plugin-blog-comments] Origin (' + req.get('origin') + ') does not match hostUrls: ' + hostUrls.join(', '));
+				// req.get('origin') is undefined for requests that are not cross-origin.
+				// No need to warn if the URL is not specified in hostUrls in this case.
+				if (!url && req.get('origin')) {
+					winston.warn('[nodebb-plugin-veegie-blog-comments] Origin (' + req.get('origin') + ') does not match hostUrls: ' + hostUrls.join(', '));
 				}
 
 				res.header("Access-Control-Allow-Origin", url);
 				res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
 				res.header("Access-Control-Allow-Credentials", "true");
-
-				var top = true;
-				var bottom = false;
-				var compose_location = meta.config['blog-comments:compose-location'];
-				if (compose_location == "bottom"){ bottom = true; top = false;}
 
 				res.json({
 					user: data.user,
@@ -79,17 +76,14 @@
 					isAdmin: !data.isAdministrator ? data.isPublisher : data.isAdministrator,
 					isLoggedIn: !!uid,
 					tid: tid,
-					category: data.category,
-					mainPost: data.mainPost ? data.mainPost[0] : null,
-					atBottom: bottom,
-					atTop: top
+					mainPost: data.mainPost ? data.mainPost[0] : null
 				});
 			});
 		});
 	};
 
 	Comments.publishArticle = function(req, res, callback) {
-		var markdown = req.body.markdown,
+		var html = req.body.html,
 			title = req.body.title,
 			url = req.body.url,
 			commentID = req.body.id,
@@ -98,7 +92,7 @@
 			cid = JSON.parse(req.body.cid);
 
 		if (cid === -1) {
-			var hostUrls = (meta.config['blog-comments:url'] || '').split(','),
+			var hostUrls = (meta.config['veegie-blog-comments:url'] || '').split(','),
 				position = 0;
 
 			hostUrls.forEach(function(hostUrl, i) {
@@ -112,7 +106,7 @@
 				}
 			});
 
-			cid = meta.config['blog-comments:cid'].toString() || '';
+			cid = meta.config['veegie-blog-comments:cid'].toString() || '';
 			cid = parseInt(cid.split(',')[position], 10) || parseInt(cid.split(',')[0], 10) || 1;
 		}
 
@@ -131,18 +125,18 @@
 			topics.post({
 				uid: uid,
 				title: title,
-				content: markdown,
+				content: html,
 				tags: tags ? JSON.parse(tags) : [],
 				req: req,
 				cid: cid
 			}, function(err, result) {
 				if (!err && result && result.postData && result.postData.tid) {
-					posts.setPostField(result.postData.pid, 'blog-comments:url', url, function(err) {
+					posts.setPostField(result.postData.pid, 'veegie-blog-comments:url', url, function(err) {
 						if (err) {
 							return res.json({error: "Unable to post topic", result: result});		
 						}
 						
-						db.setObjectField('blog-comments', commentID, result.postData.tid);
+						db.setObjectField('veegie-blog-comments', commentID, result.postData.tid);
 						res.redirect((req.header('Referer') || '/') + '#nodebb-comments');
 					});
 				} else {
@@ -154,10 +148,10 @@
 	};
 
 	Comments.addLinkbackToArticle = function(post, callback) {
-		var hostUrls = (meta.config['blog-comments:url'] || '').split(','),
+		var hostUrls = (meta.config['veegie-blog-comments:url'] || '').split(','),
 			position;
 
-		posts.getPostField(post.pid, 'blog-comments:url', function(err, url) {
+		posts.getPostField(post.pid, 'veegie-blog-comments:url', function(err, url) {
 			if (url) {
 				hostUrls.forEach(function(hostUrl, i) {
 					if (url.indexOf(hostUrl.trim().replace(/^https?:\/\//, '')) !== -1) {
@@ -165,7 +159,7 @@
 					}
 				});
 
-				var blogName = (meta.config['blog-comments:name'] || '');
+				var blogName = (meta.config['veegie-blog-comments:name'] || '');
 				blogName = parseInt(blogName.split(',')[position], 10) || parseInt(blogName.split(',')[0], 10) || 1;
 
 				post.profile.push({
@@ -179,9 +173,9 @@
 
 	Comments.addAdminLink = function(custom_header, callback) {
 		custom_header.plugins.push({
-			"route": "/blog-comments",
+			"route": "/veegie-blog-comments",
 			"icon": "fa-book",
-			"name": "Blog Comments"
+			"name": "Blog Comments (Simple Link)"
 		});
 
 		callback(null, custom_header);
@@ -193,8 +187,7 @@
 
 	Comments.init = function(params, callback) {
 		var app = params.router,
-			middleware = params.middleware,
-			controllers = params.controllers;
+			middleware = params.middleware;
 			
 		fs.readFile(path.resolve(__dirname, './public/templates/comments/comments.tpl'), function (err, data) {
 			Comments.template = data.toString();
@@ -204,8 +197,8 @@
 		app.post('/comments/reply', Comments.replyToComment);
 		app.post('/comments/publish', Comments.publishArticle);
 
-		app.get('/admin/blog-comments', middleware.admin.buildHeader, renderAdmin);
-		app.get('/api/admin/blog-comments', renderAdmin);
+		app.get('/admin/veegie-blog-comments', middleware.admin.buildHeader, renderAdmin);
+		app.get('/api/admin/veegie-blog-comments', renderAdmin);
 
 		callback();
 	};
