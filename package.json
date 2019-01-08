@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-veegie-blog-comments",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "NodeBB Blog Comments (Ghost / WP Commenting Engine) - Simple Topic Link. Forked modification of nodebb-plugin-blog-comments, replaces the comment thread with a forum topic link.",
   "main": "library.js",
   "scripts": {
@@ -18,14 +18,16 @@
     "commenting",
     "comments"
   ],
-  "contributors": [{
-    "name": "psychobunny",
-    "email": "psycho.bunny@hotmail.com"
-  },
-  {
-    "name": "Veegie",
-    "email": "veegie@last-life.net"
-  }],
+  "contributors": [
+    {
+      "name": "psychobunny",
+      "email": "psycho.bunny@hotmail.com"
+    },
+    {
+      "name": "Veegie",
+      "email": "veegie@last-life.net"
+    }
+  ],
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/lastlifedevs/nodebb-plugin-veegie-blog-comments/issues"
