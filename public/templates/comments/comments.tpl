@@ -5,6 +5,7 @@
 	<form action="{relative_path}/comments/publish" method="post">
 		<button class="btn btn-primary">Publish this post to NodeBB</button>
 		<input type="hidden" name="html" id="nodebb-content-html" />
+		<input type="hidden" name="articlePath" id="nodebb-content-articlePath" />
 		<input type="hidden" name="title" id="nodebb-content-title" />
 		<input type="hidden" name="cid" id="nodebb-content-cid" />
 		<input type="hidden" name="tags" id="nodebb-content-tags" />

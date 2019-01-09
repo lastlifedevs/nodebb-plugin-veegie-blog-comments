@@ -84,8 +84,12 @@
 	};
 
 	Comments.publishArticle = function(req, res, callback) {
-		var turndownService = new TurndownService();
+		var turndownService = new TurndownService({
+			hr: '---',
+			codeBlockStyle: 'fenced'
+		});
 		var mDown = turndownService.turndown(req.body.html);
+		mDown += '\n\n**Click [here]('+req.body.articlePath+') to view this post on the main site**.';
 
 		var content = mDown,
 			title = req.body.title,
