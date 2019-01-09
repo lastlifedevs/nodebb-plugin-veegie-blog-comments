@@ -13,7 +13,7 @@
 		path = module.parent.require('path'),
 		async = module.parent.require('async'),
 		winston = module.parent.require('winston'),
-		var TurndownService = require('turndown');
+		TurndownService = require('turndown');
 
 	module.exports = Comments;
 
