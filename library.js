@@ -12,7 +12,8 @@
 		fs = module.parent.require('fs'),
 		path = module.parent.require('path'),
 		async = module.parent.require('async'),
-		winston = module.parent.require('winston');
+		winston = module.parent.require('winston'),
+		var TurndownService = require('turndown');
 
 	module.exports = Comments;
 
@@ -83,7 +84,10 @@
 	};
 
 	Comments.publishArticle = function(req, res, callback) {
-		var html = req.body.html,
+		var turndownService = new TurndownService();
+		var mDown = turndownService.turndown(req.body.html);
+
+		var content = mDown,
 			title = req.body.title,
 			url = req.body.url,
 			commentID = req.body.id,
@@ -125,7 +129,7 @@
 			topics.post({
 				uid: uid,
 				title: title,
-				content: html,
+				content: content,
 				tags: tags ? JSON.parse(tags) : [],
 				req: req,
 				cid: cid
