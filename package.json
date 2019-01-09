@@ -38,5 +38,8 @@
   "readme": "",
   "readmeFilename": "README.md",
   "_id": "nodebb-plugin-veegie-blog-comments@0.0.1",
-  "_from": "nodebb-plugin-veegie-blog-comments@~0.0.1"
+  "_from": "nodebb-plugin-veegie-blog-comments@~0.0.1",
+  "dependencies": {
+    "turndown": "^5.0.1"
+  }
 }
