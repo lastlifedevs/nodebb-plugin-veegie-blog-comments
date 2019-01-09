@@ -120,7 +120,7 @@
 				}
 			} else {
 				if (data.isAdmin) {
-					var html = unescape(document.getElementById('nbb-post-html').innerHTML);
+					var html = document.getElementById('nbb-post-html').innerHTML;
 					html = html.split('\n\n').slice(0,2).join('\n\n') + '\n\n**Click [here]('+articlePath+') to see the full post**';
 
 					document.getElementById('nodebb-content-title').value = nbb.title;
