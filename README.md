@@ -22,8 +22,20 @@ nbb.script.src = nbb.url + '/plugins/nodebb-plugin-blog-comments/lib/ghost.js';
 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(nbb.script);
 })();
 </script>
-<div id="nbb-post-html" class="hidden">{{../post.html}}</div>
+<!-- Use the nbb-post-header div to include any content you want to include that isn't part of the Ghost API post endpoint "html" field. It can also be left empty. This example adds the feature image, if one exists. -->
+<div id="nbb-post-header" class="display-none"> 
+    {{#if feature_image}}
+	<div>
+		<img src="{{../post.feature_image}}" alt="{{../post.title}}" />
+	</div>
+	{{/if}}
+</div>
+<div id="nbb-post-html" class="display-none">
+	{{../post.html}}
+</div>
 ```
+
+As the latest version of Ghost no longer provides a Markdown output from its `post` API endpoint, this fork uses the `html` field instead. This HTML is then parsed using [Turndown](https://github.com/domchristie/turndown) to generate the Markdown used in the resulting forum post.
 
 ### Publishing
 
