@@ -7,7 +7,7 @@ A heavily-simplified fork of [nodebb-plugin-blog-comments](https://github.com/ps
 Paste this any where in `yourtheme/post.hbs`, somewhere between `{{#post}}` and `{{/post}}`. All you have to edit is line 3 (`nbb.url`) - put the URL to your NodeBB forum's home page here.
 
 ```html
-<a id="nodebb-comments"></a>
+<div id="nodebb"></div>
 <script type="text/javascript">
 var nbb = {};
 nbb.url = '//your.nodebb.com'; // EDIT THIS

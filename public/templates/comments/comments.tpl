@@ -2,8 +2,8 @@
 	<a id="forumTopicLink" href="{relative_path}/topic/{tid}">Discuss this post on the forums</a>
 <!-- ELSE -->
 	<!-- IF isAdmin -->
-	<form action="{relative_path}/comments/publish" method="post">
-		<button class="btn btn-primary">Publish this post to NodeBB</button>
+	<form id="nbbPublishForm" action="{relative_path}/comments/publish" method="post">
+		<button id="nbbPublishButton" class="btn btn-primary">Publish this post to NodeBB</button>
 		<input type="hidden" name="html" id="nodebb-content-html" />
 		<input type="hidden" name="articlePath" id="nodebb-content-articlePath" />
 		<input type="hidden" name="title" id="nodebb-content-title" />

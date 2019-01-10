@@ -5,7 +5,6 @@
 
 	var savedText, nodebbDiv, contentDiv;
 
-	document.getElementById('nodebb-comments').insertAdjacentHTML('beforebegin', '<div id="nodebb"></div>');
 	nodebbDiv = document.getElementById('nodebb');
 
 	function newXHR() {

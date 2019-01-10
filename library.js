@@ -145,7 +145,7 @@
 						}
 						
 						db.setObjectField('veegie-blog-comments', commentID, result.postData.tid);
-						res.redirect((req.header('Referer') || '/') + '#nodebb-comments');
+						res.redirect((req.header('Referer') || '/'));
 					});
 				} else {
 					res.json({error: "Unable to post topic", result: result});
