@@ -120,7 +120,7 @@
 			} else {
 				if (data.isAdmin) {
 					var html = document.getElementById('nbb-post-header').innerHTML;
-					html += document.getElementById('nbb-post-html').childNodes[0].nodeValue;
+					html += document.getElementById('nbb-post-html').innerHTML;
 
 					document.getElementById('nodebb-content-title').value = nbb.title;
 					document.getElementById('nodebb-content-html').value = html;

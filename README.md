@@ -8,20 +8,6 @@ Paste this any where in `yourtheme/post.hbs`, somewhere between `{{#post}}` and 
 
 ```html
 <div id="nodebb"></div>
-<script type="text/javascript">
-var nbb = {};
-nbb.url = '//your.nodebb.com'; // EDIT THIS
-nbb.cid = 1;	// OPTIONAL. Forces a Category ID in NodeBB.
-				//  Omit it to fallback to specified IDs in the admin panel.
-
-(function() {
-nbb.articleID = '{{../post.id}}'; nbb.title = '{{../post.title}}';
-nbb.tags = [{{#../post.tags}}"{{name}}",{{/../post.tags}}];
-nbb.script = document.createElement('script'); nbb.script.type = 'text/javascript'; nbb.script.async = true;
-nbb.script.src = nbb.url + '/plugins/nodebb-plugin-blog-comments/lib/ghost.js';
-(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(nbb.script);
-})();
-</script>
 <!-- Use the nbb-post-header div to include any content you want to include that isn't part of the Ghost API post endpoint "html" field. It can also be left empty. This example adds the feature image, if one exists. -->
 <div id="nbb-post-header" class="display-none"> 
     {{#if feature_image}}
@@ -30,12 +16,35 @@ nbb.script.src = nbb.url + '/plugins/nodebb-plugin-blog-comments/lib/ghost.js';
 	</div>
 	{{/if}}
 </div>
-<div id="nbb-post-html" class="display-none">
-	{{../post.html}}
-</div>
+<div id="nbb-post-html" class="display-none"></div>
+```
+Then place the following script inside the {{#contentfor "scripts"}} block of your post.hbs template.
+
+```html
+<script type="text/javascript">
+var nbb = {};
+nbb.url = '//lastlifebeta.stream/forum';
+
+(function() {
+nbb.articleID = '{{../post.id}}'; nbb.title = '{{../post.title}}';
+nbb.tags = [{{#../post.tags}}"{{name}}",{{/../post.tags}}];
+nbb.script = document.createElement('script'); nbb.script.type = 'text/javascript'; nbb.script.async = true;
+nbb.script.src = nbb.url + '/plugins/nodebb-plugin-veegie-blog-comments/lib/ghost.js';
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(nbb.script);
+})();
+$.get(ghost.url.api('posts/'+nbb.articleID, {absolute_urls: true})).done(function (data){
+	document.getElementById('nbb-post-html').innerHTML = data.posts[0].html;
+}).fail(function  (err){
+	console.log(err);
+});
+</script>
 ```
 
-As the latest version of Ghost no longer provides a Markdown output from its `post` API endpoint, this fork uses the `html` field instead. This HTML is then parsed using [Turndown](https://github.com/domchristie/turndown) to generate the Markdown used in the resulting forum post.
+As the latest version of Ghost no longer provides a Markdown output from its `post` API endpoint, this fork uses the `html` field instead.
+
+We retrieve the HTML content via the Ghost API using AJAX rather than through the Handlebars helper. We do this because, while you can retrieve the raw HTML of a post, there is currently no way to specify the use of absolute URLs for any embedded content using the Handlebars helper. As such, images and other uploaded content will not display. Using the API with the `absolute_urls` option alleviates this.
+
+The post's HTML is then parsed using [Turndown](https://github.com/domchristie/turndown) to generate the Markdown used in the resulting forum post.
 
 ### Publishing
 
