@@ -18,7 +18,7 @@ Paste this any where in `yourtheme/post.hbs`, somewhere between `{{#post}}` and 
 </div>
 <div id="nbb-post-html" class="display-none"></div>
 ```
-Then place the following script inside the {{#contentfor "scripts"}} block of your post.hbs template.
+Then place the following script inside a {{#contentfor "scripts"}} block in your post.hbs template.
 
 ```html
 <script type="text/javascript">
@@ -39,6 +39,8 @@ $.get(ghost.url.api('posts/'+nbb.articleID, {absolute_urls: true})).done(functio
 });
 </script>
 ```
+
+The corresponding {{{block "scripts"}}} definition will have to be placed at a point where jQuery has already been loaded. `default.hbs` is probably a good place for this.
 
 As the latest version of Ghost no longer provides a Markdown output from its `post` API endpoint, this fork uses the `html` field instead.
 
