@@ -3,7 +3,7 @@
 	
 	var articlePath = window.location.protocol + '//' + window.location.host + window.location.pathname;
 
-	var savedText, nodebbDiv, contentDiv;
+	var nodebbDiv;
 
 	nodebbDiv = document.getElementById('nodebb');
 
@@ -19,19 +19,7 @@
 	    }
 	}
 
-	var XHR = newXHR(), pagination = 0, modal;
-
-	function authenticate(type) {
-		savedText = contentDiv.value;
-		modal = window.open(nbb.url + "/" + type + "/#blog/authenticate","_blank","toolbar=no, scrollbars=no, resizable=no, width=600, height=675");
-		var timer = setInterval(function() {
-			if(modal.closed) {  
-				clearInterval(timer);
-				pagination = 0;
-				reloadComments();
-			}  
-		}, 500);
-	}
+	var XHR = newXHR(), pagination = 0;
 
 	function normalizePost(post) {
 		return post.replace(/href="\/(?=\w)/g, 'href="' + nbb.url + '/')
@@ -46,57 +34,11 @@
 			data.redirect_url = articlePath;
 			data.article_id = nbb.articleID;
 			data.pagination = pagination;
-			data.postCount = parseInt(data.postCount, 10);
-
-			for (var post in data.posts) {
-				if (data.posts.hasOwnProperty(post)) {
-					data.posts[post].timestamp = timeAgo(parseInt(data.posts[post].timestamp), 10);
-					if (data.posts[post]['veegie-blog-comments:url']) {
-						delete data.posts[post];
-					}
-				}
-			}
-
-			if (pagination) {
-				html = normalizePost(parse(data, templates.blocks['posts']));
-			} else {
-				html = parse(data, data.template);
-				nodebbDiv.innerHTML = normalizePost(html);
-			}
-
-			contentDiv = document.getElementById('nodebb-content');
-
-			setTimeout(function() {
-				var lists = nodebbDiv.getElementsByTagName("li");
-				for (var list in lists) {
-					if (lists.hasOwnProperty(list)) {
-						lists[list].className = '';
-					}
-				}
-			}, 100);
-			
-			if (savedText) {
-				contentDiv.value = savedText;
-			}
+		
+			html = parse(data, data.template);
+			nodebbDiv.innerHTML = normalizePost(html);
 
 			if (data.tid) {
-				var loadMore = document.getElementById('nodebb-load-more');
-				loadMore.onclick = function() {
-					pagination++;
-					reloadComments();
-				}
-				if (data.posts.length) {
-					loadMore.style.display = 'inline-block';	
-				}
-
-				if (pagination * 10 + data.posts.length + 1 >= data.postCount) {
-					loadMore.style.display = 'none';
-				}
-
-				if (typeof jQuery !== 'undefined' && jQuery() && jQuery().fitVids) {
-					jQuery(nodebbDiv).fitVids();
-				}
-
 				if (data.user && data.user.uid) {
 					var error = window.location.href.match(/error=[\S]*/);
 					if (error) {
@@ -108,14 +50,6 @@
 
 						document.getElementById('nodebb-error').innerHTML = error;
 					}					
-				} else {
-					document.getElementById('nodebb-register').onclick = function() {
-						authenticate('register');
-					};
-
-					document.getElementById('nodebb-login').onclick = function() {
-						authenticate('login');
-					}
 				}
 			} else {
 				if (data.isAdmin) {
@@ -132,9 +66,6 @@
 		}
 	};
 
-	
-
-
 	function reloadComments() {
 		XHR.open('GET', nbb.url + '/comments/get/' + nbb.articleID + '/' + pagination, true);
 		XHR.withCredentials = true;
@@ -142,43 +73,6 @@
 	}
 
 	reloadComments();
-
-
-	function timeAgo(time){
-		var time_formats = [
-			[60, 'seconds', 1],
-			[120, '1 minute ago'],
-			[3600, 'minutes', 60],
-			[7200, '1 hour ago'],
-			[86400, 'hours', 3600],
-			[172800, 'yesterday'],
-			[604800, 'days', 86400],
-			[1209600, 'last week'],
-			[2419200, 'weeks', 604800],
-			[4838400, 'last month'],
-			[29030400, 'months', 2419200],
-			[58060800, 'last year'],
-			[2903040000, 'years', 29030400]
-		];
-
-		var seconds = (+new Date() - time) / 1000;
-
-		if (seconds < 10) {
-			return 'just now';
-		}
-		
-		var i = 0, format;
-		while (format = time_formats[i++]) {
-			if (seconds < format[0]) {
-				if (!format[2]) {
-					return format[1];
-				} else {
-					return Math.floor(seconds / format[2]) + ' ' + format[1] + ' ago';
-				}
-			}
-		}
-		return time;
-	}
 
 	var templates = {blocks: {}};
 	function parse (data, template) {

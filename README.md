@@ -4,7 +4,7 @@ A heavily-simplified fork of [nodebb-plugin-blog-comments](https://github.com/ps
 
 ### Ghost Installation
 
-Paste this any where in `yourtheme/post.hbs`, somewhere between `{{#post}}` and `{{/post}}`. All you have to edit is line 3 (`nbb.url`) - put the URL to your NodeBB forum's home page here.
+Paste this any where in `yourtheme/post.hbs`, somewhere between `{{#post}}` and `{{/post}}`.
 
 ```html
 <div id="nodebb"></div>
@@ -18,12 +18,14 @@ Paste this any where in `yourtheme/post.hbs`, somewhere between `{{#post}}` and 
 </div>
 <div id="nbb-post-html" class="display-none"></div>
 ```
-Then place the following script inside a {{#contentfor "scripts"}} block in your post.hbs template.
+Then place the following script inside a {{#contentfor "scripts"}} block in your post.hbs template. All you have to edit is line 3 (`nbb.url`) - put the URL to your NodeBB forum's home page here.
 
 ```html
 <script type="text/javascript">
 var nbb = {};
-nbb.url = '//lastlifebeta.stream/forum';
+nbb.url = '//your.nodebb.com'; // EDIT THIS
+nbb.cid = 1;	// OPTIONAL. Forces a Category ID in NodeBB.
+				//  Omit it to fallback to specified IDs in the admin panel.
 
 (function() {
 nbb.articleID = '{{../post.id}}'; nbb.title = '{{../post.title}}';
@@ -42,11 +44,11 @@ $.get(ghost.url.api('posts/'+nbb.articleID, {absolute_urls: true})).done(functio
 
 The corresponding {{{block "scripts"}}} definition will have to be placed at a point where jQuery has already been loaded. `default.hbs` is probably a good place for this.
 
-As the latest version of Ghost no longer provides a Markdown output from its `post` API endpoint, this fork uses the `html` field instead.
+As the latest version of Ghost no longer provides a Markdown template helper, nor a Markdown field from its `post` API endpoint, this fork uses the `html` field instead.
 
-We retrieve the HTML content via the Ghost API using AJAX rather than through the Handlebars helper. We do this because, while you can retrieve the raw HTML of a post, there is currently no way to specify the use of absolute URLs for any embedded content using the Handlebars helper. As such, images and other uploaded content will not display. Using the API with the `absolute_urls` option alleviates this.
+We retrieve the HTML content via the Ghost API using AJAX rather than through the Handlebars helper. We do this because, while you can retrieve the raw HTML of a post, there is currently no way to specify the use of absolute URLs for any embedded content using the Handlebars helper. As such, images and other uploaded content will not display properly. Using the API with the `absolute_urls` option alleviates this.
 
-The post's HTML is then parsed using [Turndown](https://github.com/domchristie/turndown) to generate the Markdown used in the resulting forum post.
+The post's HTML is then parsed using [Turndown](https://github.com/domchristie/turndown) to generate the Markdown used in the resulting forum post. Of course, this process isn't perfect (embedded tweets in the new Ghost editor become block-quotes, for example), and may require some tweaks for your specific blog/forum.
 
 ### Publishing
 
