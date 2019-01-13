@@ -35,7 +35,7 @@ nbb.script.src = nbb.url + '/plugins/nodebb-plugin-veegie-blog-comments/lib/ghos
 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(nbb.script);
 })();
 $.get(ghost.url.api('posts/'+nbb.articleID, {absolute_urls: true})).done(function (data){
-	document.getElementById('nbb-post-html').innerHTML = data.posts[0].html;
+    document.getElementById('nbb-post-html').innerHTML = data.posts[0].html.replace('http://' + document.location.host, 'https://' + document.location.host);
 }).fail(function  (err){
 	console.log(err);
 });
@@ -46,7 +46,7 @@ The corresponding {{{block "scripts"}}} definition will have to be placed at a p
 
 As the latest version of Ghost no longer provides a Markdown template helper, nor a Markdown field from its `post` API endpoint, this fork uses the `html` field instead.
 
-We retrieve the HTML content via the Ghost API using AJAX rather than through the Handlebars helper. We do this because, while you can retrieve the raw HTML of a post, there is currently no way to specify the use of absolute URLs for any embedded content using the Handlebars helper. As such, images and other uploaded content will not display properly. Using the API with the `absolute_urls` option alleviates this.
+We retrieve the HTML content via the Ghost API using AJAX rather than through the Handlebars helper. We do this because, while you can retrieve the raw HTML of a post, there is currently no way to specify the use of absolute URLs for any embedded content using the Handlebars helper. As such, images and other uploaded content will not display properly. Using the API with the `absolute_urls` option alleviates this. Then we do a `.replace` to ensure that all embedded content from the same site is done using https, as the default is http for some reason.
 
 The post's HTML is then parsed using [Turndown](https://github.com/domchristie/turndown) to generate the Markdown used in the resulting forum post. Of course, this process isn't perfect (embedded tweets in the new Ghost editor become block-quotes, for example), and may require some tweaks for your specific blog/forum.
 
